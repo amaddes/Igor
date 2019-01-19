@@ -99,6 +99,22 @@ app.post('/', function (req, res) {
 	for (var key in clients) {
       clients[key].send(message);
     };
+	}
+	
+	else if (req.body.request.command == "ping")
+  {
+    res.json({
+      version: req.body.version,
+      session: req.body.session,
+      response: {
+        text: 'от пинга слышу',
+        end_session: false,
+      },
+    });
+	message="тестовое сообщение";
+	for (var key in clients) {
+      clients[key].send(message);
+    };
   }
   
   else if (req.body.request.command == "проверить где включен свет" || req.body.request.command == "Проверить где включен свет")
