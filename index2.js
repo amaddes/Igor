@@ -49,6 +49,7 @@ const url = "mongodb://localhost:27017/";
 
 app.use(express.json());
 app.post('/', function (req, res) {
+	console.log(req.body.request.command);
 	console.log(req.body.request.nlu.tokens);
   if (req.body.request.command == "no text")
   {
@@ -85,37 +86,6 @@ app.post('/', function (req, res) {
     });
   }
 
-  else if (req.body.request.command == "отправь тестовое сообщение на сервер")
-  {
-    res.json({
-      version: req.body.version,
-      session: req.body.session,
-      response: {
-        text: 'Отправляю тестовое сообщение на сервер',
-        end_session: false,
-      },
-    });
-	message="тестовое сообщение";
-	for (var key in clients) {
-      clients[key].send(message);
-    };
-	}
-	
-	else if (req.body.request.command == "ping")
-  {
-    res.json({
-      version: req.body.version,
-      session: req.body.session,
-      response: {
-        text: 'от пинга слышу',
-        end_session: false,
-      },
-    });
-	message="тестовое сообщение";
-	for (var key in clients) {
-      clients[key].send(message);
-    };
-  }
   
   else if (req.body.request.command == "проверить где включен свет" || req.body.request.command == "Проверить где включен свет")
   {
