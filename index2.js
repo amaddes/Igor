@@ -49,6 +49,7 @@ const url = "mongodb://localhost:27017/";
 
 app.use(express.json());
 app.post('/', function (req, res) {
+	console.log(req.body.request.nlu.tokens);
   if (req.body.request.command == "no text")
   {
     res.json({
