@@ -159,7 +159,7 @@ app.post('/', function (req, res) {
 		console.log(req.body.request.nlu.tokens);
 		console.log(req.body.session.user_id);
 	if (req.body.request.nlu.tokens[3]=="спальне"){
-		mongoClient.connect(function(err, client){
+		mongoClient.connect(async function(err, client){
 			db = client.db("clients");
 			collection = db.collection("station");
 			if(err) return console.log(err);
