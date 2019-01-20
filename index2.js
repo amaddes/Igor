@@ -41,16 +41,11 @@ webSocketServer.on('connection', function(ws) {
 			mongoClient.connect(function(err, client){
 			db = client.db("clients");
 			collection = db.collection("station");
-			collection.findOne({key:msg.key},function(err, result){
-			if (reult) {
-		//				collection.updateOne({key:msg.key},{$set:{id_websocket:id}});
-					console.log(result);
+			result = collection.findOne({key:msg.key});
+				console.log(result);
 					client.close();
-						}
 				});
-				});
-			 }
-
+				}
 	});
 
   ws.on('close', function() {
