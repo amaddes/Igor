@@ -89,7 +89,8 @@ app.post('/', function (req, res) {
 	
 	else if (req.body.request.command == "Выключи свет в спальне")
   {
-    res.json({
+		console.log(req.body.session.user_id);
+		res.json({
       session: req.body.session,
 	  version: req.body.version,
       response: {
