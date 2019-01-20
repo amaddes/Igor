@@ -41,10 +41,12 @@ webSocketServer.on('connection', function(ws) {
 			mongoClient.connect(function(err, client){
 			db = client.db("clients");
 			collection = db.collection("station");
+			if(err) return console.log(err);
 			//console.log(collection);
 			collection.find({key:msg.key}).toArray(function (err, result){ 
 				console.log(result);
-					client.close();
+				if (results.length > 0) {collection.({key:msg.key},{$set:{id_websocket:id}});}
+				client.close();
 			});
 				});
 				}
