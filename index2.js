@@ -11,7 +11,13 @@ var httpsOptions = {
 };
 const MongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/";
-const mongoClient = new MongoClient(url, { useNewUrlParser: true });
+
+async function dbQueryallowUsers(user_id) {
+	const db = await MongoClient.connect(url);
+	const dbo = db.db("client");
+	const result = await dbo.collection("station").find({allow_user_id:user_id}).toArray();
+	return result;
+}
 
 var initMsg = {
 	magic:"&INIT"
@@ -159,17 +165,8 @@ app.post('/', function (req, res) {
 		console.log(req.body.request.nlu.tokens);
 		console.log(req.body.session.user_id);
 	if (req.body.request.nlu.tokens[3]=="спальне"){
-		mongoClient.connect(async function(err, client){
-			db = await client.db("clients");
-			collection = await db.collection("station");
-			if(err) return console.log(err);
-			console.log(collection);
-			await collection.find({allow_user_id:req.body.session.user_id}).toArray(async function (err, result){ 
-				console.log(result);
-				if (await result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
-				client.close();
-			});
-				});
+		console.log(dbQueryallowUsers(req.body.session.user_id));
+	
 				res.json({
 					version: req.body.version,
 					session: req.body.session,
