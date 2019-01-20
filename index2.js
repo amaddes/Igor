@@ -11,6 +11,8 @@ var httpsOptions = {
 };
 const MongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/";
+const mongoClient = new MongoClient(url, { useNewUrlParser: true });
+
 var initMsg = {
 	magic:"&INIT"
 		}
@@ -33,7 +35,16 @@ webSocketServer.on('connection', function(ws) {
 
   ws.on('message', function(message) {
 		console.log('получено сообщение ' + message);
-		
+		 msg = JSON.parse(message);
+		 	if (msg.magic == '&INITANSW') {
+				mongoClient.connect(function(err, client){
+					db = client.db("clients");
+					collection = db.collection("station");
+					res = collection.find({key:msg.key});
+					console.log(res);
+					client.close();
+				});
+			 }
 
 	});
 
@@ -87,10 +98,9 @@ app.post('/', function (req, res) {
   else if (req.body.request.command == "проверить где включен свет" || req.body.request.command == "Проверить где включен свет")
   {
     otvetProverki = "Свет сейчас включен в следующих помещениях:"
-	const mongoClient = new MongoClient(url, { useNewUrlParser: true });
-	mongoClient.connect(function(err, client){
-    const db = client.db("test");
-    const collection = db.collection("rooms");
+		mongoClient.connect(function(err, client){
+    db = client.db("test");
+    collection = db.collection("rooms");
     ligthOn = collection.find({light:1},{name: 1}).toArray(function(err, results){
         results.forEach(function(entry){
 			if (entry.name == "IT-office") {
@@ -141,10 +151,9 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 			mongoClient.connect(function(err, client){
-				const db = client.db("test");
-				const collection = db.collection("rooms");
+				db = client.db("test");
+				collection = db.collection("rooms");
 				collection.updateOne({name:"IT-office"},{$set:{light:0}});
 				client.close();
 			});
@@ -165,10 +174,9 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 			mongoClient.connect(function(err, client){
-				const db = client.db("test");
-				const collection = db.collection("rooms");
+				db = client.db("test");
+				collection = db.collection("rooms");
 				collection.updateOne({name:"Sales-office"},{$set:{light:0}});
 				client.close();
 			});  
@@ -201,10 +209,9 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 			mongoClient.connect(function(err, client){
-				const db = client.db("test");
-				const collection = db.collection("rooms");
+				db = client.db("test");
+				collection = db.collection("rooms");
 				collection.updateOne({name:"IT-office"},{$set:{light:1}});
 				client.close();
 			});  
@@ -226,10 +233,9 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 			mongoClient.connect(function(err, client){
-				const db = client.db("test");
-				const collection = db.collection("rooms");
+				db = client.db("test");
+				collection = db.collection("rooms");
 				collection.updateOne({name:"Sales-office"},{$set:{light:1}});
 				client.close();
 			});  
