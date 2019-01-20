@@ -42,7 +42,8 @@ webSocketServer.on('connection', function(ws) {
 					collection = db.collection("station");
 					collection.findOne({key:msg.key},function(err, result){
 						if (err) throw err;
-						console.log(result.name);
+						collection.updateOne({key:msg.key},{$set:{id_websocket:id}});
+						console.log(result);
 						client.close();
 					});
 				});
