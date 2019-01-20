@@ -41,10 +41,11 @@ webSocketServer.on('connection', function(ws) {
 					db = client.db("clients");
 					collection = db.collection("station");
 					collection.findOne({key:msg.key},function(err, result){
-						if (err) throw err;
+						if (reult) {
 						collection.updateOne({key:msg.key},{$set:{id_websocket:id}});
 						console.log(result);
 						client.close();
+						}
 					});
 				});
 			 }
@@ -81,6 +82,18 @@ app.post('/', function (req, res) {
 	  version: req.body.version,
       response: {
         text: 'Привет! Это я твой еще маленький помощник',
+		end_session: false,
+      },
+    });
+	}
+	
+	else if (req.body.request.command == "Выключи свет в спальне")
+  {
+    res.json({
+      session: req.body.session,
+	  version: req.body.version,
+      response: {
+        text: 'Готово',
 		end_session: false,
       },
     });
