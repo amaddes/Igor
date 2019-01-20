@@ -160,8 +160,8 @@ app.post('/', function (req, res) {
 		console.log(req.body.session.user_id);
 	if (req.body.request.nlu.tokens[3]=="спальне"){
 		mongoClient.connect(async function(err, client){
-			db = client.db("clients");
-			collection = db.collection("station");
+			db = await client.db("clients");
+			collection = await db.collection("station");
 			if(err) return console.log(err);
 			//console.log(collection);
 			await collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
