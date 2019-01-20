@@ -89,8 +89,7 @@ app.post('/', function (req, res) {
 	
 	else if (req.body.request.command == "Выключи свет в спальне")
   {
-		
-		res.json({
+			res.json({
       session: req.body.session,
 	  version: req.body.version,
       response: {
@@ -159,7 +158,28 @@ app.post('/', function (req, res) {
 	{
 		console.log(req.body.request.nlu.tokens);
 		console.log(req.body.session.user_id);
-		if ((req.body.request.nlu.tokens[3]=="отделе" && req.body.request.nlu.tokens[4]=="информационных" && req.body.request.nlu.tokens[5]=="технологий") || ((req.body.request.nlu.tokens[3]=="ИТ") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="Ит") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="ит") && (req.body.request.nlu.tokens[4]=="отделе")))
+	if (req.body.request.nlu.tokens[3]=="спальне"){
+		mongoClient.connect(function(err, client){
+			db = client.db("clients");
+			collection = db.collection("station");
+			if(err) return console.log(err);
+			//console.log(collection);
+			collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
+				console.log(result);
+				if (result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
+				client.close();
+			});
+				});
+				res.json({
+					version: req.body.version,
+					session: req.body.session,
+					response: {
+					text: 'Готово',
+					end_session: false,
+						},
+					});
+		}
+		else if ((req.body.request.nlu.tokens[3]=="отделе" && req.body.request.nlu.tokens[4]=="информационных" && req.body.request.nlu.tokens[5]=="технологий") || ((req.body.request.nlu.tokens[3]=="ИТ") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="Ит") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="ит") && (req.body.request.nlu.tokens[4]=="отделе")))
 		{
 			res.json({
 			version: req.body.version,
