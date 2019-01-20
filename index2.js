@@ -45,7 +45,7 @@ webSocketServer.on('connection', function(ws) {
 			//console.log(collection);
 			collection.find({key:msg.key}).toArray(function (err, result){ 
 				console.log(result);
-				if (results.length > 0) {collection.updateOne({key:msg.key},{$set:{id_websocket:id}});}
+				if (result.length > 0) {collection.updateOne({key:msg.key},{$set:{id_websocket:id}});}
 				client.close();
 			});
 				});
