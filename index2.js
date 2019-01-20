@@ -164,7 +164,7 @@ app.post('/', function (req, res) {
 			collection = db.collection("station");
 			if(err) return console.log(err);
 			//console.log(collection);
-			collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
+			await collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
 				console.log(result);
 				if (result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
 				client.close();
