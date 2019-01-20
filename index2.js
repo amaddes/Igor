@@ -36,19 +36,20 @@ webSocketServer.on('connection', function(ws) {
   ws.on('message', function(message) {
 		console.log('получено сообщение ' + message);
 		 msg = JSON.parse(message);
-		 	if (msg.magic == '&INITANSW') {
-				mongoClient.connect(function(err, client){
-					db = client.db("clients");
-					collection = db.collection("station");
-					collection.findOne({key:msg.key},function(err, result){
-						if (reult) {
-						collection.updateOne({key:msg.key},{$set:{id_websocket:id}});
-						console.log(result);
-						client.close();
-						}
-					});
-				});
-			 }
+		 console.log(msg);
+		// 	if (msg.magic == '&INITANSW') {
+		//		mongoClient.connect(function(err, client){
+		//			db = client.db("clients");
+		//			collection = db.collection("station");
+		//			collection.findOne({key:msg.key},function(err, result){
+		//				if (reult) {
+		//				collection.updateOne({key:msg.key},{$set:{id_websocket:id}});
+		//				console.log(result);
+		//				client.close();
+		//				}
+		//			});
+		//		});
+		//	 }
 
 	});
 
