@@ -89,7 +89,7 @@ app.post('/', function (req, res) {
 	
 	else if (req.body.request.command == "Выключи свет в спальне")
   {
-		console.log(req.body.session.user_id);
+		
 		res.json({
       session: req.body.session,
 	  version: req.body.version,
@@ -158,6 +158,7 @@ app.post('/', function (req, res) {
 	else if (req.body.request.nlu.tokens[0] == "выключи" && req.body.request.nlu.tokens[1] == "свет" && req.body.request.nlu.tokens[2] == "в")
 	{
 		console.log(req.body.request.nlu.tokens);
+		console.log(req.body.session.user_id);
 		if ((req.body.request.nlu.tokens[3]=="отделе" && req.body.request.nlu.tokens[4]=="информационных" && req.body.request.nlu.tokens[5]=="технологий") || ((req.body.request.nlu.tokens[3]=="ИТ") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="Ит") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="ит") && (req.body.request.nlu.tokens[4]=="отделе")))
 		{
 			res.json({
