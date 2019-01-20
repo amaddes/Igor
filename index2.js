@@ -44,7 +44,7 @@ webSocketServer.on('connection', function(ws) {
 			collection.findOne({key:msg.key}).toArray(function (err, result){ 
 				console.log(result);
 					client.close();
-			}):
+			});
 				});
 				}
 	});
