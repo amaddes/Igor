@@ -41,9 +41,10 @@ webSocketServer.on('connection', function(ws) {
 			mongoClient.connect(function(err, client){
 			db = client.db("clients");
 			collection = db.collection("station");
-			result = collection.findOne({key:msg.key}).toArray();
+			collection.findOne({key:msg.key}).toArray(function (err, result){ 
 				console.log(result);
 					client.close();
+			}):
 				});
 				}
 	});
