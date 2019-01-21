@@ -9,7 +9,7 @@ var httpsOptions = {
     key: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/cert.pem')
 };
-const MongoClient = require("mongodb").MongoClient;
+const mongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/";
 
 async function dbQueryallowUsers(user_id) {
