@@ -1,4 +1,3 @@
-
 var https = require('https');
 var fs = require('fs');
 var WebSocketServer = new require('ws');
@@ -9,15 +8,9 @@ var httpsOptions = {
     key: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/cert.pem')
 };
-const mongoClient = require("mongodb").MongoClient;
+const MongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/";
-
-async function dbQueryallowUsers(user_id) {
-	const db = await MongoClient.connect(url);
-	const dbo = db.db("client");
-	const result = await dbo.collection("station").find({allow_user_id:user_id}).toArray();
-	return result;
-}
+const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 
 var initMsg = {
 	magic:"&INIT"
@@ -165,8 +158,17 @@ app.post('/', function (req, res) {
 		console.log(req.body.request.nlu.tokens);
 		console.log(req.body.session.user_id);
 	if (req.body.request.nlu.tokens[3]=="спальне"){
-		console.log(dbQueryallowUsers(req.body.session.user_id));
-	
+		mongoClient.connect(async function(err, client){
+			db = await client.db("clients");
+			collection = await db.collection("station");
+			if(err) return console.log(err);
+			//console.log(collection);
+			await collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
+				console.log(result);
+				if (result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
+				client.close();
+			});
+				});
 				res.json({
 					version: req.body.version,
 					session: req.body.session,
