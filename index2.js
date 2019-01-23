@@ -8,9 +8,9 @@ var httpsOptions = {
     key: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/butlerigor.ru/cert.pem')
 };
-const MongoClient = require("mongodb").MongoClient;
+const mongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/";
-const mongoClient = new MongoClient(url, { useNewUrlParser: true });
+//const mongoClient = new MongoClient(url, { useNewUrlParser: true });
 
 var initMsg = {
 	magic:"&INIT"
@@ -20,9 +20,9 @@ var initMsg = {
 var clients = {};
 
 // WebSocket-сервер на порту 8081
-var webSocketServer = new WebSocketServer.Server({
-  port: 8081
-});
+const server = new https.createServer(httsOptions);
+
+const webSocketServer = new WebSocketServer.Server({server});
 
 
 webSocketServer.on('connection', function(ws) {
@@ -37,11 +37,10 @@ webSocketServer.on('connection', function(ws) {
 		msg = JSON.parse(message);
 		console.log(msg);
 		if (msg.magic == '&INITANSW') {
-			mongoClient.connect(function(err, client){
+			mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
 			db = client.db("clients");
 			collection = db.collection("station");
 			if(err) return console.log(err);
-			//console.log(collection);
 			collection.find({key:msg.key}).toArray(function (err, result){ 
 				console.log(result);
 				if (result.length > 0) {collection.updateOne({key:msg.key},{$set:{id_websocket:id}});}
@@ -60,7 +59,7 @@ webSocketServer.on('connection', function(ws) {
 
 app.use(express.json());
 app.post('/', function (req, res) {
-	console.log(req.body.request.command);
+	console.log(req.body.request.nlu.entities);
 	console.log(req.body.request.nlu.tokens);
   if (req.body.request.command == "no text")
   {
@@ -113,11 +112,11 @@ app.post('/', function (req, res) {
   else if (req.body.request.command == "проверить где включен свет" || req.body.request.command == "Проверить где включен свет")
   {
     otvetProverki = "Свет сейчас включен в следующих помещениях:"
-		mongoClient.connect(function(err, client){
-    db = client.db("test");
-    collection = db.collection("rooms");
-    ligthOn = collection.find({light:1},{name: 1}).toArray(function(err, results){
-        results.forEach(function(entry){
+		mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
+			db = client.db("test");
+			collection = db.collection("rooms");
+			ligthOn = collection.find({light:1},{name: 1}).toArray(function(err, results){
+			results.forEach(function(entry){
 			if (entry.name == "IT-office") {
 				otvetProverki=otvetProverki + "\nОтдел информационных технологий.";
 			}
@@ -158,14 +157,13 @@ app.post('/', function (req, res) {
 		console.log(req.body.request.nlu.tokens);
 		console.log(req.body.session.user_id);
 	if (req.body.request.nlu.tokens[3]=="спальне"){
-		mongoClient.connect(async function(err, client){
-			db = await client.db("clients");
-			collection = await db.collection("station");
+		mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
+			db = client.db("clients");
+			collection = db.collection("station");
 			if(err) return console.log(err);
-			//console.log(collection);
-			await collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
-				console.log(result);
-				if (result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
+			collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, result){ 
+			console.log(result);
+			if (result.length > 0) {console.log("тебе можно");} else {console.log("тебе нельзя");}
 				client.close();
 			});
 				});
@@ -188,7 +186,7 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			mongoClient.connect(function(err, client){
+			mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
 				db = client.db("test");
 				collection = db.collection("rooms");
 				collection.updateOne({name:"IT-office"},{$set:{light:0}});
@@ -211,7 +209,7 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			mongoClient.connect(function(err, client){
+			mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
 				db = client.db("test");
 				collection = db.collection("rooms");
 				collection.updateOne({name:"Sales-office"},{$set:{light:0}});
@@ -246,7 +244,7 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			mongoClient.connect(function(err, client){
+			mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
 				db = client.db("test");
 				collection = db.collection("rooms");
 				collection.updateOne({name:"IT-office"},{$set:{light:1}});
@@ -270,7 +268,7 @@ app.post('/', function (req, res) {
 			end_session: false,
 				},
 			});
-			mongoClient.connect(function(err, client){
+			mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
 				db = client.db("test");
 				collection = db.collection("rooms");
 				collection.updateOne({name:"Sales-office"},{$set:{light:1}});
@@ -321,6 +319,8 @@ app.post('/', function (req, res) {
 app.use('*', function (req, res) {
   res.sendStatus(404);
 });
+
+server.listen(8081);
 
 https.createServer(httpsOptions, app).listen(port);
 
