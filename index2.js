@@ -20,7 +20,7 @@ var initMsg = {
 var clients = {};
 
 // WebSocket-сервер на порту 8081
-const server = new https.createServer(httsOptions);
+const server = new https.createServer(httpsOptions);
 
 const webSocketServer = new WebSocketServer.Server({server});
 
