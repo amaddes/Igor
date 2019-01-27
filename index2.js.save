@@ -161,7 +161,9 @@ app.post('/', function (req, res) {
 					devId:devId,
 					state:"OFF"
 				};
-				clients[resultSt[0].id_websocket].send(JSON.stringify(controlMsg));
+				console.log(resultSt);
+				console.log(resultDev);
+				console.log(controlMsg);
 				});
 				console.log("тебе можно");
 			} 
@@ -238,44 +240,7 @@ app.post('/', function (req, res) {
 	else if (req.body.request.nlu.tokens[0] == "включи" && req.body.request.nlu.tokens[1] == "свет" && req.body.request.nlu.tokens[2] == "в")
 	{
 		console.log(req.body.request.nlu.tokens);
-		if (req.body.request.nlu.tokens[3]=="спальне"){
-                mongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
-                        db = client.db("clients");
-                        collection = db.collection("station");
-                        if(err) return console.log(err);
-                        collection.find({allow_user_id:req.body.session.user_id}).toArray(function (err, resultSt){
-                        if (resultSt.length > 0) {
-                                stId = resultSt[0].key;
-                                console.log(stId);
-                                devCollection = db.collection("controlDev");
-                                devCollection.find({"stationId":stId,"activeFrase":"спальня"}).toArray(function (err, resultDev){
-                                devId = resultDev[0].devId;
-                                controlMsg = {
-                                        magic:"&CTRL",
-                                        devId:devId,
-                                        state:"ON"
-                                };
-                                clients[resultSt[0].id_websocket].send(JSON.stringify(controlMsg));
-                                });
-                                console.log("тебе можно");
-                        }
-                        else {
-                                console.log("тебе нельзя");
-                        }
-                                client.close();
-                        });
-                                });
-                                res.json({
-                                        version: req.body.version,
-                                        session: req.body.session,
-                                        response: {
-                                        text: 'Готово',
-                                        end_session: false,
-						 },
-                                        });
-                }
-
-		else if ((req.body.request.nlu.tokens[3]=="отделе" && req.body.request.nlu.tokens[4]=="информационных" && req.body.request.nlu.tokens[5]=="технологий") || ((req.body.request.nlu.tokens[3]=="ИТ") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="Ит") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="ит") && (req.body.request.nlu.tokens[4]=="отделе")))
+		if ((req.body.request.nlu.tokens[3]=="отделе" && req.body.request.nlu.tokens[4]=="информационных" && req.body.request.nlu.tokens[5]=="технологий") || ((req.body.request.nlu.tokens[3]=="ИТ") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="Ит") && (req.body.request.nlu.tokens[4]=="отделе")) || ((req.body.request.nlu.tokens[3]=="ит") && (req.body.request.nlu.tokens[4]=="отделе")))
 		{
 			res.json({
 			version: req.body.version,
